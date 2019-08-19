@@ -4,7 +4,7 @@ import {View, ActivityIndicator, StyleSheet} from 'react-native';
 
 import MapView, {Marker} from 'react-native-maps';
 
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 
 import api from './services/api';
 
@@ -24,27 +24,26 @@ const styles = StyleSheet.create({
 function App() {
   const [loading, setLoading] = useState(true);
   const [coordinates, setCoordinates] = useState({});
-  const [points, setPoints] = useState({});
+  const [points, setPoints] = useState([]);
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
       ({coords}) => {
+        console.log(coords);
         setCoordinates(coords);
         setLoading(false);
       },
       error => {
         console.log(error);
       },
-      {enableHighAccuracy: true, maximumAge: 10000, timeout: 10000},
+      {enableHighAccuracy: true, timeout: 25000, maximumAge: 3600000},
     );
   }, []);
 
   useEffect(() => {
     async function getData() {
       try {
-        const {data} = await api.get('/points', {
-          params: coordinates,
-        });
+        const {data} = await api.get('/points', {params: coordinates});
 
         setPoints(data);
       } catch (err) {

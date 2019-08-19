@@ -21,7 +21,7 @@ class PointController {
     const points = await Point.findAll({
       where: where(literal(haversine), "<=", 10)
     });
-
+    console.log(points);
     return res.json(points);
   }
 }
